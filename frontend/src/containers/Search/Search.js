@@ -5,21 +5,20 @@ import { search } from '../../userFunctions';
 class Search extends Component {
 
     state = {
-        name: 'lasttry',
-        results:[{
-            name:'name1',
-            year:'2000',
-            ratings:5,
-            id:1
-        },{
-            name:'name2',
-            year:'2001',
-            ratings:3,
-            id:2
-        }]
+        name: '',
+        results:[]
       }
-    
-    //Oct25 设想：返回值即搜索结果应该setstate存在state中，pass on to <SearchResult />
+
+    //it will execute each time the component renders 
+    componentDidMount = () => {
+        this.setState({
+            name:'', 
+            results:[]
+        });
+        console.log(this.state);
+    }
+
+    //Oct25：返回值即搜索结果应该setstate存在state中，pass on to <SearchResult />
     onSubmit = (e) => {
         e.preventDefault()
     
@@ -29,15 +28,33 @@ class Search extends Component {
         console.log(query);
     
         search(query).then(res => {
-            console.log(res);
+            console.log('returned res',res);
           if (!res.error) {
-            this.props.history.push(`/`)
+            // const l = res.length;
+            // let newRes = []
+            // for (var i = 0; i < l; i ++){
+            //     newRes[i] = res[i];
+            // }
+            let newRes = res;
+        
+            this.setState({results: newRes});
+            //this.props.history.push('/')
+        
+            //console.log('new state res first title',this.state.results[0].title);
           }
           else {
-              console.log(res.error);
+              this.setState({results:[]})
+              //console.log(res.error);
           }
         })
     }
+
+    //this handler will make the user input saved to state.name
+    changeInputHandler = (event) => {
+        this.setState({name:event.target.value});
+    }
+
+    //not implemented yet. For redirecting to a MoviePage when click on 'View Details'
     clickHandler = (id) => {
         console.log(id);
     }
@@ -47,11 +64,11 @@ class Search extends Component {
         return (
             <div>
                 <form onSubmit={this.onSubmit}>
-                    <input></input>
+                    <input onChange={(event) => this.changeInputHandler(event)} value={this.state.name}></input>
                     <button>Search</button>
                 </form>
                 {this.state.results? 
-                <SearchResults results={this.state.results} clicked={this.clickHandler}/> :null}
+                    <SearchResults results={this.state.results} clicked={this.clickHandler}/> :null}
             </div>
         )
     }
