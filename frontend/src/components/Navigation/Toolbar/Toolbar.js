@@ -7,6 +7,7 @@ import NavigationItems from '../../Navigation/NavigationItems/NavigationItems';
 //import Button from '../../UI/Button/Button';
 
 const toolbar = (props) => {
+
     return(
         <header className={styles.Toolbar}>
             <div className={styles.Logo}>

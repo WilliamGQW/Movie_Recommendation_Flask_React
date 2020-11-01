@@ -79,6 +79,11 @@ def search():
     print(type(res))
     return res
 
+#log in: to be completed
+
+#register: to be completed
+
+#logout: to be completed
 
 if __name__ == '__main__':
     app.run('127.0.0.1', port=5000, debug=True)

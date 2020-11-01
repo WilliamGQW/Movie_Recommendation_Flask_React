@@ -12,7 +12,8 @@ const navigationItems = (props) => (
         {props.isAuthenticated?<li className={styles.Item}><NavLink to="/recommendations" activeClassName={styles.active}>Recommendations</NavLink></li>: null}
         {props.isAuthenticated?
             <li className={styles.Item}><NavLink to="/logout" activeClassName={styles.active}>LogOut</NavLink></li>
-            : <li className={styles.Item}><NavLink to="/auth" activeClassName={styles.active}>SignIn</NavLink></li>}
+            : <li className={styles.Item}><NavLink to="/login" activeClassName={styles.active}>SignIn</NavLink></li>}
+        {props.isAuthenticated? null:<li className={styles.Item}><NavLink to='/register' activeClassName={styles.active}>Register</NavLink></li>}
     </ul>
 )
 
