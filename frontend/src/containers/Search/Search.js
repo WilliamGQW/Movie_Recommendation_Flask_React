@@ -56,7 +56,7 @@ class Search extends Component {
 
     //not implemented yet. For redirecting to a MoviePage when click on 'View Details'
     clickHandler = (id) => {
-        console.log(id);
+        this.props.history.push(`/movie/${id}`);
     }
     
     

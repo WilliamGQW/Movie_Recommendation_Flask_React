@@ -12,3 +12,4 @@ export const search = query => {
       return response.data
     })
 }
+
