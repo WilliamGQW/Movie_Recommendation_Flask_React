@@ -22,10 +22,10 @@ const SearchResults = (props) => {
             </div>
             {results.map(re => 
                 <SearchResult
-                name={re.title} 
-                id={re.id}
-                genres={re.genres}
-                rating={re.vote_average}
+                name={re[0]} 
+                id={re[1]}
+                genres={re[2]}
+                rating={re[3]}
                 clicked={props.clicked}
                 />)}
         </div>

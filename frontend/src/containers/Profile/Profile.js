@@ -3,15 +3,13 @@ import jwt_decode from 'jwt-decode';
 
 class Profile extends Component {
     state= {
-        email: '',
-        username: ''
+        email: ''
     }
 
     componentDidMount() {
         const token = localStorage.usertoken
         const decoded = jwt_decode(token)
         this.setState({
-            username: decoded.identity.username,
             email: decoded.identity.email
         })
     }

@@ -44,3 +44,56 @@ export const register = user => {
           console.log(err)
       })
 }
+
+export const getMovieInfo = query => {
+  return axios
+    .get('/getMovieInfo', {
+      params : { //请求参数
+        mvId: query.mvId
+      }})
+    .then(response => {
+      console.log('success')
+      //console.log(response)
+      return response.data
+    })
+}
+
+export const checkUserFav = query => {
+  return axios
+    .get('/checkUserFav', {
+      params : { //请求参数
+        email: query.email,
+        mvId: query.mvId
+      }})
+    .then(response => {
+      console.log('success')
+      //console.log(response)
+      return response.data
+    }).catch(error => {
+      return error
+    })
+}
+
+export const addToFav = like => {
+  return axios
+      .post('/addToFav', {
+          email: like.email,
+          mvId: like.mvId
+      })
+      .then(response => {
+          console.log('Successfully added to Fav List')
+          return response.data
+      })
+}
+
+export const deleteFromFav = like => {
+  return axios
+      .delete('/deleteFromFav', {
+          email: like.email,
+          mvId: like.mvId
+      })
+      .then(response => {
+          console.log('Successfully delete from Fav List')
+          return response.data
+      })
+}

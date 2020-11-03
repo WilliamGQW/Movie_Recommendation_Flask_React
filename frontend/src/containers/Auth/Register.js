@@ -31,7 +31,6 @@ class Register extends Component {
             }
             else{
                 localStorage.clear();
-                window.location.reload();   
             }
         }
         )
