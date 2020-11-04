@@ -97,3 +97,15 @@ export const deleteFromFav = like => {
           return response.data
       })
 }
+
+export const updateMovComment = req => {
+  return axios
+        .patch('/updateMovComment', {
+          comment: req.comment,
+          email: req.email
+        })
+        .then(response => {
+          console.log(response)
+          return response.data
+        })
+}

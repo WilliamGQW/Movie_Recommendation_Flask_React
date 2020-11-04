@@ -1,7 +1,7 @@
 import React, { Component } from 'react'; 
 import Button from '../../components/Button/Button';
 import Model from '../../components/Model/Model';
-import { getMovieInfo, checkUserFav, addToFav, deleteFromFav } from '../../userFunctions';
+import { getMovieInfo, checkUserFav, addToFav, deleteFromFav, updateMovComment } from '../../userFunctions';
 import jwt_decode from 'jwt-decode';
 
 class MoviePage extends Component{
@@ -18,7 +18,8 @@ class MoviePage extends Component{
         overview: '',
         savedToFav: false,
         btnType: 'Save',
-        email:''
+        email:'',
+        comment: ''
     }
 
     componentDidMount = () => {
@@ -48,7 +49,7 @@ class MoviePage extends Component{
 
             }
         });
-        //2. check the LIKE table and change the savedToFav in this.state
+        //2. check the LIKE table if the user has liked this movie before
         if (localStorage.usertoken){
             const token = localStorage.usertoken
             const decoded = jwt_decode(token)
@@ -72,13 +73,14 @@ class MoviePage extends Component{
         }
     }
 
+
     clickHandler = () => {
-        if (!this.state.savedToFav) {
-            this.setState({
-                savedToFav: true,
-                btnType: 'Delete'
-            });
-            if (this.state.email){
+        if (this.state.email){
+            if (!this.state.savedToFav) {
+                this.setState({
+                    savedToFav: true,
+                    btnType: 'Delete'
+                });
                 const like = {
                     email: this.state.email,
                     mvId: this.state.id
@@ -86,13 +88,11 @@ class MoviePage extends Component{
                 addToFav(like).then(res => {
                     console.log(res);
                 })
-            }
-        } else {
-            this.setState({
-                savedToFav: false,
-                btnType: 'Save'
-            });
-            if (this.state.email){
+            } else {
+                this.setState({
+                    savedToFav: false,
+                    btnType: 'Save'
+                });
                 const like = {
                     email: this.state.email,
                     mvId: this.state.id
@@ -101,7 +101,25 @@ class MoviePage extends Component{
                     console.log(res);
                 })
             }
+        
         }
+    }
+
+    submitHandler = (e) => {
+        e.preventDefault();
+
+        const update = {
+            comment: this.state.comment,
+            email: this.state.email
+        }
+
+        updateMovComment(update).then(res =>{
+            console.log(res)
+        });
+    }
+
+    changeInputHandler = (e) => {
+        this.setState({comment: e.target.value});
     }
 
     render(){
@@ -118,6 +136,12 @@ class MoviePage extends Component{
                 <p>Overview: {this.state.overview}</p>
                 <Button clicked={this.clickHandler.bind(this)} btnType={this.state.btnType}>Like</Button>
                 <Model></Model>
+                { this.state.savedToFav? 
+                <form onSubmit={this.submitHandler}>
+                    <input onChange={(event) => this.changeInputHandler(event)} value={this.state.comment}></input>
+                    <button>Update your comment!</button>
+                </form>
+                :null}
             </div>
         );
         
