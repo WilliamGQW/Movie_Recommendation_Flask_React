@@ -12,7 +12,7 @@ const SearchResults = (props) => {
         {title:xxx, id:xx, genres:xxx, vote_average:xxxx},
         ....
     ]*/
-    return(
+    return (
         <div className={styles.SearchResults}>
             <div className={styles_res.SearchResult}>
                 <div className={styles_res.Item}>Movie Name</div>
@@ -20,13 +20,13 @@ const SearchResults = (props) => {
                 <div className={styles_res.Item}>Rating</div>
                 <div className={styles_res.Item}>Movie Page</div>
             </div>
-            {results.map(re => 
+            {results.map(re =>
                 <SearchResult
-                name={re.title} 
-                id={re.id}
-                genres={re.genres}
-                rating={re.vote_average}
-                clicked={props.clicked}
+                    name={re[0]}
+                    id={re[1]}
+                    genres={re[2]}
+                    rating={re[3]}
+                    clicked={props.clicked}
                 />)}
         </div>
     )

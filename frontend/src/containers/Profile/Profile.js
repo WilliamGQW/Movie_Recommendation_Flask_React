@@ -1,30 +1,55 @@
 import React, { Component } from 'react';
 import jwt_decode from 'jwt-decode';
+import { getUserFav } from '../../userFunctions';
+import FavoriteMovies from '../../components/FavoriteMovies/FavoriteMovies';
 
 class Profile extends Component {
-    state= {
+    state = {
         email: '',
-        username: ''
+        favs: [[1, 'h', 'good'], [2, 'asd', 'like it'], [3, 'akw', '!!!'], [4, 'kjhuiwhf', 'kagdfhew hejkfaef']]
     }
 
     componentDidMount() {
-        const token = localStorage.usertoken
-        const decoded = jwt_decode(token)
-        this.setState({
-            username: decoded.identity.username,
-            email: decoded.identity.email
-        })
+        if (!localStorage.usertoken) {
+            this.props.history.push(`/login`);
+        } else {
+            const token = localStorage.usertoken;
+            const decoded = jwt_decode(token);
+            const temp = decoded.identity.email;
+            this.setState({
+                email: decoded.identity.email
+            })
+            //console.log('decoded', decoded);
+            console.log('iden', decoded.identity);
+            console.log(this.state.email);
+
+            const query = {
+                email: temp
+            }
+            getUserFav(query).then(res => {
+                console.log(res);
+                if (res.movies) {
+                    this.setState({ favs: res.movies, email: temp });
+                }
+            })
+
+        }
+
     }
 
 
-    render(){
-        return(
+    clickHandler = (id) => {
+        this.props.history.push(`/movie/${id}`);
+    }
+
+    render() {
+        return (
             <div>
                 <div>
                     <table className="table col-md-6 mx-auto">
                         <tbody>
                             <tr>
-                                <td className="badge badge-dark text-white col-8">User: </td>
+                                <td className="badge badge-dark text-white col-8">User: {this.state.email} </td>
                                 <td>{this.state.username}</td>
                             </tr>
                         </tbody>
@@ -32,10 +57,13 @@ class Profile extends Component {
                 </div>
                 <div>
                     <h3>Favorite List</h3>
-                </div> 
+                    <div>
+                        <FavoriteMovies results={this.state.favs} clicked={this.clickHandler} />
+                    </div>
+                </div>
                 <div>
                     <h3>Recommended Movies</h3>
-                </div> 
+                </div>
             </div>
         )
     }
