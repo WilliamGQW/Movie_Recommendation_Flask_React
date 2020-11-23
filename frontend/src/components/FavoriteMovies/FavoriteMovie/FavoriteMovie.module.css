@@ -1,0 +1,36 @@
+.FavoriteMovie {
+    display: flex;
+    width: 500px;
+    justify-content: space-between;
+    align-items: center;
+    margin: 5px 0;
+    padding: 5px;
+}
+.Item {
+    display: flex;
+    flex-direction:row;
+    align-items: flex-start;
+    margin: 0px 20px;
+    padding: 5px;
+}
+
+.Button{
+    display:inline-block;
+    padding:0.2em 1.45em;
+    margin:0.1em;
+    border:0.15em solid #CCCCCC;
+    box-sizing: border-box;
+    text-decoration:none;
+    font-family:'Segoe UI','Roboto',sans-serif;
+    font-weight:400;
+    color:#000000;
+    background-color:#CCCCCC;
+    text-align:center;
+    position:relative;
+    }
+.Button:hover{
+    border-color:#7a7a7a;
+}
+.Button:active{
+    background-color:#999999;
+}
