@@ -1,7 +1,7 @@
 import csv
 import sqlite3
 import json
-from . import app, db, bcrypt, jwt
+from . import app, db, bcrypt, jwt, movieReview
 from app.models import User, FavMovie
 from app.forms import LoginForm, SignupForm
 from flask_login import LoginManager
@@ -12,7 +12,8 @@ from flask_bcrypt import Bcrypt
 from datetime import datetime
 from flask_sqlalchemy import SQLAlchemy
 from flask import Flask, render_template, url_for, request, redirect, flash, jsonify
-
+from app.recommender import recommend
+import requests
 
 conn = sqlite3.connect("Movie.db")
 curs = conn.cursor()
@@ -42,24 +43,32 @@ def index():
 
 @app.route('/search', methods=['GET'])
 def search():
-    # cur = mysql.connection.cursor()
-    # print(request)
-    # print(type(request.get_json()))
-    # print(request.args)
-    conn = sqlite3.connect("Movie.db")
+    # conn = sqlite3.connect("Movie.db")
+    conn = sqlite3.connect("app/app.db")
     print("-------connected to db--------")
     cur = conn.cursor()
-    search_query = request.args.get("name")
+    search_key = request.args.get("name")
+    num = request.args.get("rate")
+    print("search_key is ", search_key)
+    print("num is :", num)
+    num = 0
+    # cur.execute("SELECT title, id, genres, vote_average FROM Movies WHERE title like '%" +
+    #             str(search_query)+"%'")
+    query = "SELECT Movies.title, Movies.id, Movies.genres, Movies.vote_average " \
+            "FROM (SELECT Movies.id, count(email) AS cnt "\
+        " FROM Movies JOIN fav_movie ON Movies.id=fav_movie.mid "\
+        " GROUP BY Movies.id" \
+        ") as temp JOIN Movies ON temp.id=Movies.id " \
+            "WHERE Movies.title LIKE '%" + str(search_key) + '%\'' \
+            " AND cnt>=" + str(num)
+    print(query)
 
-    # last_name = request.get_json()['last_name']
-    # email = request.get_json()['email']
-    # password = bcrypt.generate_password_hash(request.get_json()['password']).decode('utf-8')
-    # created = datetime.utcnow()
+    if num == 0:
+        query = "SELECT title, id, genres, vote_average FROM Movies WHERE title like '%" + \
+            str(search_key)+"%'"
 
-    cur.execute("SELECT title, id, genres, vote_average FROM Movies WHERE title like '%" +
-                str(search_query)+"%'")
-    # mysql.connection.commit()
-
+    # simple_query = "SELECT * FROM fav_movie"
+    cur.execute(query)
     res = cur.fetchall()
     res = json.dumps(res)
     print(res)
@@ -180,16 +189,12 @@ def addToFav():
     email = request.get_json()['email']
     mvId = request.get_json()['mvId']
     title = request.get_json()['title']
-    # email = 'gg@gmail.com'
-    # mvId = 673
-    # title = 'Harry Potter and the Prisoner of Azkaban'
-    print("-----addToFav got email: ", email)
-    print("-----addToFav got mvid: ", mvId)
-    print("-----addToFav got title: ", title)
     result = ''
 
     newfav = FavMovie(mid=mvId, email=email, title=title)
-    db.session.add(newfav)
+    # db.session.add(newfav)
+    db.session.execute(
+        "INSERT INTO fav_movie(mid, email, title) VALUES({},'{}','{}')".format(mvId, email, title))
     db.session.commit()
     print("----Successfully added to fav_movie table-----")
 
@@ -202,25 +207,20 @@ def addToFav():
         result = access_token
         return result
 
+# delete from fav table
 
-# delete from fav table [DELETE]
+
 @app.route('/deleteFromFav', methods=['POST'])
 def deleteFromFav():
     email = request.get_json()['email']
     mvId = request.get_json()['mvId']
     title = request.get_json()['title']
-    print("-----deleteFromFav got email: ", email)
-    print("-----deleteFromFav got mvid: ", mvId)
-    print("-----deleteFromFav got title: ", title)
     result = ''
 
-    # movie_to_delete = FavMovie.query.filter_by(mid=mvId, email=email)
-    # movie_to_delete.delete()
-
-    # movie_to_delete = FavMovie(mvId, email)
     movie_to_delete = FavMovie.query.filter_by(mid=mvId, email=email).first()
-    print(movie_to_delete)
-    db.session.delete(movie_to_delete)
+    db.session.execute(
+        "DELETE FROM fav_movie where mid={} AND email='{}'".format(mvId, email)
+    )
     db.session.commit()
     print("----Successfully delete from fav_movie table-----")
 
@@ -237,10 +237,6 @@ def deleteFromFav():
 # update fav movie notes
 @app.route('/updateMovComment', methods=['PATCH'])
 def updateMovComment():
-    print("-------------")
-    print(request)
-    print(request.get_json())
-    print("-------------")
     email = request.get_json()['query'][1]
     mvId = request.get_json()['query'][2]
     notes = request.get_json()['query'][0][0]
@@ -250,7 +246,10 @@ def updateMovComment():
     result = ''
 
     movie_to_update = FavMovie.query.filter_by(mid=mvId, email=email).first()
-    movie_to_update.notes = notes
+    db.session.execute(
+        "UPDATE fav_movie SET notes='{}' WHERE mid={} AND email='{}' ".format(
+            notes, mvId, email)
+    )
     db.session.commit()
 
     if movie_to_update is None:
@@ -292,3 +291,84 @@ def getUserFav():
         # favorites is a list of json strings [{},{},{}...]
         result = jsonify({'movies': favorites})
     return result
+
+
+#
+@app.route('/getRecMovies', methods=['GET'])
+def getRecMovies():
+    print("-------------getRecMovies-------------")
+    email = request.args.get("email")
+    result = ''
+    rec_movie_list = []
+
+    fav_movie_list = FavMovie.query.filter_by(email=email).all()
+
+    if fav_movie_list is None:
+        result = jsonify(
+            {"error": "no favorite movies"})
+        return result
+    else:
+        print("-------------The list of RecMovies-------------")
+        for movie in fav_movie_list:
+            rec_movies = recommend(movie.title)
+            print(rec_movies)
+            for rec_m in rec_movies:
+                conn = sqlite3.connect("Movie.db")
+                cur = conn.cursor()
+                cur.execute(
+                    "SELECT title, id FROM Movies WHERE title like '%" + str(rec_m)+"%'")
+                res = cur.fetchall()
+                print(res)
+                title = res[0][0]
+                mvId = int(res[0][1])
+                print("title is: ", title)
+                print("mid is: ", mvId)
+                rec_movie_list.append({'movie_id': mvId, 'title': title})
+
+        result = jsonify({'movies': rec_movie_list})
+    return result
+
+
+@app.route('/getPosterPath', methods=['GET'])
+def getPosterPath():
+    mvId = request.args.get("mvId")
+    movie_link = "https://api.themoviedb.org/3/movie/" + \
+        str(mvId) + "?api_key=21448a0b1b8436c9d47ee36bc038b72a"
+    f = requests.get(movie_link)
+    data = f.text
+    # print(type(data))
+    s = json.loads(data)
+    half_path = s['poster_path']
+    res = " \"http://image.tmdb.org/t/p/w200" + half_path + "\""
+    print("movie id is : ", mvId)
+    print("the poster path is: ", res)
+    return res
+
+
+@app.route('/addReview/<review>/<mid>/<email>')
+def addReview(review, mid, email):
+    print("--------addReview--------")
+    print("review is: ", review)
+    print("email is: ", email)
+    print("mid is: ", mid)
+    print("------------------------")
+    movieReview.insert_one({"mid": mid, "email": str(email), "review": review})
+    # movieReview.insert_one({"review": review.lower()})
+    print("url for getreviews: ", url_for('getReviews', mid=mid))
+    # return redirect(url_for('getReviews/' + mid + '/' + email))
+    return redirect(url_for('getReviews', mid=mid))
+
+
+@app.route('/getReviews/<mid>')
+def getReviews(mid):
+    print("--------getReviews--------")
+    print("mid is: ", mid)
+    print(type(mid))
+    reviews_json = []
+    if movieReview.find():
+        for review in movieReview.find({"mid": mid}).sort("review"):
+            print("review is: ", review)
+            print("email_ is: ", review['email'])
+            reviews_json.append(
+                {"review": review['review'], "id": str(review['_id']), "email": str(review['email'])})
+    return json.dumps(reviews_json)

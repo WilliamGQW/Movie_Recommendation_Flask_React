@@ -1,0 +1,10 @@
+.RecMovies {
+    width: 100%;
+    background-color: white;
+    display: flex;
+    flex-flow: column;
+    align-items: center;
+    box-shadow: 0 2px 1px white;
+    margin: auto;
+    padding: 10px 0;
+}

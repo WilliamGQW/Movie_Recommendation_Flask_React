@@ -1,12 +1,14 @@
 import React, { Component } from 'react';
 import jwt_decode from 'jwt-decode';
-import { getUserFav } from '../../userFunctions';
+import { getUserFav, getRecMovies } from '../../userFunctions';
 import FavoriteMovies from '../../components/FavoriteMovies/FavoriteMovies';
+import RecMovies from '../../components/RecMovies/RecMovies';
 
 class Profile extends Component {
     state = {
         email: '',
-        favs: [[1, 'h', 'good'], [2, 'asd', 'like it'], [3, 'akw', '!!!'], [4, 'kjhuiwhf', 'kagdfhew hejkfaef']]
+        favs: [[1, 'h', 'good'], [2, 'asd', 'like it'], [3, 'akw', '!!!'], [4, 'kjhuiwhf', 'kagdfhew hejkfaef']],
+        recommends: [[1, 'h', 'good'], [2, 'asd', 'like it'], [3, 'akw', '!!!'], [4, 'kjhuiwhf', 'kagdfhew hejkfaef']]
     }
 
     componentDidMount() {
@@ -30,6 +32,13 @@ class Profile extends Component {
                 console.log(res);
                 if (res.movies) {
                     this.setState({ favs: res.movies, email: temp });
+                }
+            })
+
+            getRecMovies(query).then(res => {
+                console.log(res);
+                if (res.movies) {
+                    this.setState({ recommends: res.movies, email: temp });
                 }
             })
 
@@ -61,8 +70,12 @@ class Profile extends Component {
                         <FavoriteMovies results={this.state.favs} clicked={this.clickHandler} />
                     </div>
                 </div>
+
                 <div>
                     <h3>Recommended Movies</h3>
+                    <div>
+                        <RecMovies results={this.state.recommends} clicked={this.clickHandler} />
+                    </div>
                 </div>
             </div>
         )

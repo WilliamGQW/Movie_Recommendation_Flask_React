@@ -75,6 +75,19 @@ export const getMovieInfo = query => {
     })
 }
 
+export const getPosterPath = query => {
+  return axios
+    .get('/getPosterPath', {
+      params: {
+        mvId: query.mvId
+      }
+    })
+    .then(response => {
+      console.log('success')
+      return response.data
+    })
+}
+
 export const checkUserFav = query => {
   return axios
     .get('/checkUserFav', {
@@ -143,6 +156,25 @@ export const updateMovComment = req => {
 }
 
 export const getUserFav = query => {
+  return axios
+    .get('/getUserFav', {
+      params: {
+        email: query.email,
+      }
+    })
+    .then(response => {
+
+      console.log('success')
+      //console.log(response)
+      return response.data
+
+
+    }).catch(error => {
+      return error
+    })
+}
+
+export const getRecMovies = query => {
   return axios
     .get('/getUserFav', {
       params: {

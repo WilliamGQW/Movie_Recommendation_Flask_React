@@ -1,11 +1,14 @@
 import React, { Component } from 'react';
 import Button from '../../components/Button/Button';
 import Model from '../../components/Model/Model';
-import { getMovieInfo, checkUserFav, addToFav, deleteFromFav, updateMovComment } from '../../userFunctions';
+import { getMovieInfo, checkUserFav, addToFav, deleteFromFav, updateMovComment, getPosterPath } from '../../userFunctions';
 import jwt_decode from 'jwt-decode';
+import NewReview from '../../components/MovieReviews/NewReview';
+import Results from '../../components/MovieReviews/Results';
 
 class MoviePage extends Component {
     state = {
+        poster_path: '',
         title: '',
         id: '',
         genres: '',
@@ -19,10 +22,51 @@ class MoviePage extends Component {
         savedToFav: false,
         btnType: 'Save',
         myemail: '',
-        comment: ''
+        comment: '',
+
+        review: '',
+        reviews: [],
+        loading: true
     }
 
+    // ------------------------------------------------------------
+
+    handleChange = (event) => {
+        this.setState({ review: event.target.value });
+    }
+
+    handleSubmit = async event => {
+        console.log("handle submit review")
+        event.preventDefault();
+        this.setState({
+            loading: true
+        });
+        // await fetch('/addReview/' + this.state.review + '/' + this.state.myemail + '/' + this.state.id, {
+        //     method: 'GET'
+        // });
+        await fetch('/addReview/' + this.state.review + '/' + this.state.id + '/' + this.state.myemail, {
+            method: 'GET'
+        });
+        this.getReviews(this.state.id);
+    }
+
+    //   get all reviews and print them out
+    getReviews(mid) {
+        console.log("getReviews got called!!!!")
+        fetch('/getReviews/' + mid)
+            .then(response => response.json())
+            .then(json => {
+                this.setState({
+                    review: '',
+                    reviews: json,
+                    loading: false
+                })
+            })
+    }
+    // ------------------------------------------------------------
+
     componentDidMount = () => {
+        this.getReviews(this.props.mvId);
         console.log(this.props.mvId);
 
         const query = {
@@ -45,6 +89,17 @@ class MoviePage extends Component {
                     directors: res[7],
                     actors: res[8],
                     overview: res[9]
+                });
+            }
+        })
+
+        getPosterPath(query).then(result => {
+            console.log('returned poster path', result);
+            if (!result.error) {
+                const res = result;
+                console.log(res);
+                this.setState({
+                    poster_path: res
                 });
             }
         })
@@ -149,10 +204,20 @@ class MoviePage extends Component {
         this.setState({ comment: [e.target.value] });
     }
 
+
     render() {
+        // let Image_Http_URL ={ uri: {poster_path}};
+
         return (
             <div>
+
                 <h3>{this.state.title}</h3>
+                {/* <img src={this.state.poster_path} alt="sorry no image available" width="500" height="600" /> */}
+                {/* <img src="http://image.tmdb.org/t/p/w92/qJ2tW6WMUDux911r6m7haRef0WH.jpg" alt="sorry no image available" /> */}
+                <img src={this.state.poster_path} alt="sorry no image available" />
+                {/* <Card>
+                    <Image src={this.state.poster_path} wrapped ui={false} />
+                </Card> */}
                 <p>{this.state.genres}</p >
                 <p>Year: {this.state.release_year}</p >
                 <p>Rating: {this.state.vote_average}</p >
@@ -169,6 +234,11 @@ class MoviePage extends Component {
                         <button>Update your comment!</button>
                     </form>
                     : null}
+
+                {/* <header className="App-header"> */}
+                <NewReview handleChange={this.handleChange} handleSubmit={this.handleSubmit} value={this.state.review} />
+                {this.state.loading ? <h1>Loading...</h1> : <Results {...this.state} />}
+                {/* </header> */}
             </div>
         );
 
