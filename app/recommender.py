@@ -82,7 +82,7 @@ cosine_sim = cosine_similarity(count_matrix, count_matrix)
 indices = pd.Series(df['title'])
 
 #  defining the function that takes in movie title
-# as input and returns the top 10 recommended movies
+# as input and returns the top n recommended movies
 
 
 def recommend(title, cosine_sim=cosine_sim):
@@ -91,7 +91,7 @@ def recommend(title, cosine_sim=cosine_sim):
     # creating a Series with the similarity scores in descending order
     score_series = pd.Series(cosine_sim[idx]).sort_values(ascending=False)
 
-    # getting the indexes of the 10 most similar movies
+    # getting the indexes of the n most similar movies
     top_5_indexes = list(score_series.iloc[1:5].index)
 
     # populating the list with the titles of the best 5 matching movies
