@@ -4,8 +4,20 @@ export const search = query => {
   return axios
     .get('/search', {
       params: {
-        name: query.name
+        name: query.name,
+        num: query.num
       }
+    })
+    .then(response => {
+      console.log('success')
+      //console.log(response)
+      return response.data
+    })
+}
+
+export const getPopularMovies = query => {
+  return axios
+    .get('/getPopularMovies', {
     })
     .then(response => {
       console.log('success')
@@ -176,15 +188,15 @@ export const getUserFav = query => {
 
 export const getRecMovies = query => {
   return axios
-    .get('/getUserFav', {
+    .get('/getRecMovies', {
       params: {
         email: query.email,
       }
     })
     .then(response => {
 
-      console.log('success')
-      //console.log(response)
+      console.log('success getRecMovies')
+      console.log(response.data)
       return response.data
 
 

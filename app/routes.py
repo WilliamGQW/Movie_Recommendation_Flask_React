@@ -48,10 +48,13 @@ def search():
     print("-------connected to db--------")
     cur = conn.cursor()
     search_key = request.args.get("name")
-    num = request.args.get("rate")
+    num = request.args.get("num")
+    # num = request.get_json()['num']
     print("search_key is ", search_key)
     print("num is :", num)
-    num = 0
+    if num is None:
+        num = 0
+    # num = 0
     # cur.execute("SELECT title, id, genres, vote_average FROM Movies WHERE title like '%" +
     #             str(search_query)+"%'")
     query = "SELECT Movies.title, Movies.id, Movies.genres, Movies.vote_average " \
@@ -63,7 +66,7 @@ def search():
             " AND cnt>=" + str(num)
     print(query)
 
-    if num == 0:
+    if int(num) == 0:
         query = "SELECT title, id, genres, vote_average FROM Movies WHERE title like '%" + \
             str(search_key)+"%'"
 
@@ -270,7 +273,7 @@ def getUserFav():
     print("-------------")
     # email = request.get_json()['email']
     email = request.args.get("email")
-    print("-----updateMovComment got email: ", email)
+    print("-----getUserFav got email: ", email)
     result = ''
     favorites = []
 
@@ -293,7 +296,6 @@ def getUserFav():
     return result
 
 
-#
 @app.route('/getRecMovies', methods=['GET'])
 def getRecMovies():
     print("-------------getRecMovies-------------")
@@ -339,7 +341,7 @@ def getPosterPath():
     # print(type(data))
     s = json.loads(data)
     half_path = s['poster_path']
-    res = " \"http://image.tmdb.org/t/p/w200" + half_path + "\""
+    res = " \"http://image.tmdb.org/t/p/w300" + half_path + "\""
     print("movie id is : ", mvId)
     print("the poster path is: ", res)
     return res
@@ -372,3 +374,25 @@ def getReviews(mid):
             reviews_json.append(
                 {"review": review['review'], "id": str(review['_id']), "email": str(review['email'])})
     return json.dumps(reviews_json)
+
+
+@app.route('/getPopularMovies/', methods=['GET'])
+def getPopularMovies():
+    conn = sqlite3.connect("app/app.db")
+    print("-------connected to db--------")
+    cur = conn.cursor()
+
+    # return popular movies (popularity >= 60) with a rating >= 6.0 and liked by at least 3 users
+    query = "SELECT Movies.title, Movies.id, Movies.genres, Movies.vote_average " \
+            "FROM (SELECT Movies.id, count(email) AS cnt "\
+            " FROM Movies JOIN fav_movie ON Movies.id=fav_movie.mid "\
+            " GROUP BY Movies.id" \
+            ") as temp JOIN Movies ON temp.id=Movies.id " \
+            "WHERE cnt>=3 AND Movies.popularity>=50 AND Movies.vote_average>=6"
+    print(query)
+    cur.execute(query)
+    res = cur.fetchall()
+    res = json.dumps(res)
+    print(res)
+    print(type(res))
+    return res

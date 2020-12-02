@@ -23,11 +23,10 @@ df['keywords'] = ""
 for index, row in df.iterrows():
     overview = row['overview']
 
-    # instantiating Rake, by default it uses english stopwords from NLTK
-    # and discards all puntuation characters as well
+    # here we start Rake
+    # it uses english stopwords and get rid of all the puntuations
+    # then it extracts some
     r = Rake()
-
-    # extracting the words by passing the text
     r.extract_keywords_from_text(overview)
 
     # getting the dictionary whith key words as keys and their scores as values
@@ -87,21 +86,16 @@ indices = pd.Series(df['title'])
 
 
 def recommend(title, cosine_sim=cosine_sim):
-
-    # initializing the empty list of recommended movies
     recommended_movies = []
-
-    # gettin the index of the movie that matches the title
     idx = indices[indices == title].index[0]
-
     # creating a Series with the similarity scores in descending order
     score_series = pd.Series(cosine_sim[idx]).sort_values(ascending=False)
 
     # getting the indexes of the 10 most similar movies
-    top_10_indexes = list(score_series.iloc[1:5].index)
+    top_5_indexes = list(score_series.iloc[1:5].index)
 
-    # populating the list with the titles of the best 10 matching movies
-    for i in top_10_indexes:
+    # populating the list with the titles of the best 5 matching movies
+    for i in top_5_indexes:
         recommended_movies.append(list(df['title'])[i])
 
     return recommended_movies

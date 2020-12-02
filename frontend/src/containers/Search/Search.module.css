@@ -1,0 +1,12 @@
+.SearchForm {
+    width: 25%;
+}
+
+.body {
+    background-color: transparent;
+    color: rgba(255,255,255,0.8);
+    font-size: x-large;
+    padding: 40px;
+    font-family: Arial;
+    text-align: center;
+  }

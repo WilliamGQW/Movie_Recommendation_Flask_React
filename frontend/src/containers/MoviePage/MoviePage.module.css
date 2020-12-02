@@ -1,0 +1,76 @@
+.MoviePage {
+    display: flex;
+    width: 33.33%;
+    justify-content: space-between;
+    margin: 5px 0;
+    padding: 5px;
+    background-color: transparent;
+}
+.Item {
+    flex: 1;
+    justify-content: space-between;
+    /* backgroundColor: '#ecf0f1', */
+    padding: 8px;
+    flex-direction: row;
+    align-items :center
+}
+
+.main{
+    width:100%;
+    height:500px;
+} 
+
+.left{
+    /* width:35%;
+    height:500px;
+    float:left;
+    margin-left: 0.5cm; */
+    width:20%;
+    height: 300px;
+    float:left;
+    margin-left: 1.5cm;
+}
+.right{
+    /* width:50%;
+    height:500px;
+    float:left; */
+    line-height: 150%;
+    width:70%;
+    height: 500px;  
+    float:right;
+    font-size: medium;
+    margin-top: 1cm;
+}
+
+.bottom{
+    /* width:100%; */
+    width:100%;
+    height:200px;
+}
+
+.bottomLeft{
+    width:40%;
+    float:left;
+    height:200px;
+    margin-top: 1cm;
+    margin-left: 1.5cm;
+
+}
+.foot{
+    width:100%;
+    margin-left: 1.5cm;
+    float:left;
+    height:200px;
+}
+
+.sometext{
+    color: red;
+    font-size: larger;
+}
+
+.ll {
+    font-size: large;
+}
+.ss {
+    font-size: medium;
+}

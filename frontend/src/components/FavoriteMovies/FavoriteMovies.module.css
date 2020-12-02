@@ -1,6 +1,7 @@
 .FavoriteMovies {
     width: 100%;
-    background-color: white;
+    /* background-color: white; */
+    background-color: transparent;
     display: flex;
     flex-flow: column;
     align-items: center;

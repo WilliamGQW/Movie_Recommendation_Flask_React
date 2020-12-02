@@ -1,6 +1,6 @@
 import React from 'react';
 
-import movieLogo from '../../../../assets/images/movie-logo.png';
+import movieLogo from '../../../../assets/images/Film_logo_.png';
 import styles from './Logo.module.css'
 
 const logo = (props) => (

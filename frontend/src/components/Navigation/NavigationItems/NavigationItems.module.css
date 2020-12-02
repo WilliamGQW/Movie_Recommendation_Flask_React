@@ -6,6 +6,10 @@
     align-items: center;
     flex-flow: column;
     height: 100%;
+    background-color: transparent;
+    /* border:0.15em solid #CCCCCC; */
+    margin: 5px 0;
+    /* box-sizing: border-box; */
 }
 
 .Item {
@@ -17,7 +21,8 @@
 }
 
 .Item a{
-    color: #CDBA96;
+    /* color: #CDBA96; */
+    color: transparent;
     text-decoration: none;
     width: 100%;
     box-sizing: border-box;
@@ -27,7 +32,7 @@
 .Item a:hover,
 .Item a:active,
 .Item a.active {
-    color:#8B7355;
+    color:#000000;
 }
 
 
@@ -55,8 +60,8 @@
     .Item a:hover,
     .Item a:active,
     .Item a.active {
-        background-color:  #CDBA96;
-        border-bottom: 4px solid #8B7355;
+        background-color:  #110561;
+        background-color:  #110561;
         color: white;
 }
 }

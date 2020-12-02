@@ -1,14 +1,16 @@
 import React, { Component } from 'react';
 import SearchResults from '../../components/SearchResults/SearchResults';
-import { search } from '../../userFunctions';
+import { search, getPopularMovies } from '../../userFunctions';
 import Select from 'react-select';
+import styles from './Search.module.css';
 
 class Search extends Component {
 
     state = {
         name: '',
         results: [],
-        rate: ''
+        num: '',
+        popular: []
     }
 
     //it will execute each time the component renders 
@@ -16,18 +18,32 @@ class Search extends Component {
         this.setState({
             name: '',
             results: [],
-            rate: ''
+            num: ''
         });
         console.log(this.state);
+
+        getPopularMovies().then(res => {
+            console.log('returned getPopularMovies', res);
+            if (!res.error) {
+                let newRes = res;
+
+                this.setState({ popular: newRes });
+            }
+            else {
+                this.setState({ popular: [] })
+            }
+        })
     }
 
     //Oct25：返回值即搜索结果应该setstate存在state中，pass on to <SearchResult />
     onSubmit = (e) => {
         e.preventDefault()
 
+        console.log("onSubmit name is:", this.state.name)
+        console.log("onSubmit num is:", this.state.num)
         const query = {
             name: this.state.name,
-            rate: this.state.rate
+            num: this.state.num
         }
         console.log("something something")
         console.log(query);
@@ -35,17 +51,9 @@ class Search extends Component {
         search(query).then(res => {
             console.log('returned res', res);
             if (!res.error) {
-                // const l = res.length;
-                // let newRes = []
-                // for (var i = 0; i < l; i ++){
-                //     newRes[i] = res[i];
-                // }
                 let newRes = res;
 
                 this.setState({ results: newRes });
-                //this.props.history.push('/')
-
-                //console.log('new state res first title',this.state.results[0].title);
             }
             else {
                 this.setState({ results: [] })
@@ -56,7 +64,8 @@ class Search extends Component {
 
     //this handler will make the user input saved to state.name
     changeInputHandler = (event) => {
-        this.setState({ name: event.target.value });
+        // this.setState({ name: event.target.value });
+        this.setState({ [event.target.name]: event.target.value });
     }
 
     //not implemented yet. For redirecting to a MoviePage when click on 'View Details'
@@ -68,43 +77,63 @@ class Search extends Component {
     //     this.setState({ rate: selectedOption });
     //     console.log(`rate selected:`, selectedOption);
     // }
-    change = (e) => {
-        this.setState({ rate: e.target.value });
+    change = (event) => {
+        this.setState({ num: event.target.value });
+    }
+
+    submit = (event) => {
+        event.preventDefault()
+        console.log('returned num', event.target.value);
+        this.setState({ num: event.target.value });
     }
 
     render() {
-
-        const ratings = [
-            { label: "1", value: "1" },
-            { label: "2", value: "2" },
-            { label: "3", value: "3" },
-            { label: "4", value: "4" },
-            { label: "5", value: "5" },
-            { label: "6", value: "6" },
-            { label: "7", value: "7" },
-            { label: "8", value: "8" },
-            { label: "9", value: "9" }
-        ];
-
         return (
             <div>
-                <div>
-                    {/* <Select onChange={this.change} value={this.state.rate} options={ratings} placeholder="Select count" /> */}
-                    <select onChange={this.change}>
+
+                {/* <Select onChange={this.change} value={this.state.rate} options={ratings} placeholder="Select count" /> */}
+                {/* <select onChange={this.change}>
                         <option value="1">1</option>
                         <option value="2">2</option>
-                    </select>
-                    {/* <input type="submit" value="Submit" /> */}
-                </div>
-                <form onSubmit={this.onSubmit}>
-                    <input onChange={(event) => this.changeInputHandler(event)} value={this.state.name}></input>
-                    {/* <Select onChange={this.change} value={this.state.rate} options={ratings} placeholder="Select count"/> */}
+                    </select> */}
 
+                {/* <form onSubmit={this.submit}>
+                    <input onChange={(event) => this.change(event)} value={this.state.num} placeholder="Select num"></input>
+
+                    <button>Submit</button>
+
+                </form> */}
+
+                <form onSubmit={e => this.onSubmit(e)} >
+                    <div >
+                        <label>name</label>
+                        <input
+                            className={styles.SearchForm}
+                            name='name'
+                            value={this.state.name}
+                            onChange={e => this.changeInputHandler(e)}
+                            placeholder="enter some key words to search..." />
+
+                    </div>
+                    <div>
+                        <label>num</label>
+                        <input
+                            className={styles.SearchForm}
+                            name='num'
+                            value={this.state.num}
+                            onChange={e => this.changeInputHandler(e)}
+                            placeholder="Liked by how many users..." />
+                    </div>
                     <button>Search</button>
-
                 </form>
+
+
                 {this.state.results ?
                     <SearchResults results={this.state.results} clicked={this.clickHandler} /> : null}
+
+                <p className={styles.body}> Popular Movies</p>
+                {this.state.popular ?
+                    <SearchResults results={this.state.popular} /> : <p>No popular movies available right now</p>}
 
 
                 {/* <div className="row">

@@ -1,5 +1,6 @@
 .Logo {
-    background-color: white;
+    /* background-color: white; */
+    background-color: transparent;
     padding: 1px;
     height: 100%;
     box-sizing: border-box;

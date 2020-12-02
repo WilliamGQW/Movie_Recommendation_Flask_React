@@ -29,6 +29,7 @@ class Profile extends Component {
                 email: temp
             }
             getUserFav(query).then(res => {
+                console.log("------------getUserFav---------");
                 console.log(res);
                 if (res.movies) {
                     this.setState({ favs: res.movies, email: temp });
@@ -36,6 +37,7 @@ class Profile extends Component {
             })
 
             getRecMovies(query).then(res => {
+                console.log("------------getRecMovies---------");
                 console.log(res);
                 if (res.movies) {
                     this.setState({ recommends: res.movies, email: temp });

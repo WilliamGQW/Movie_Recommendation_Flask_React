@@ -1,10 +1,12 @@
-import React, { Component } from 'react';
+import React, { Component, View } from 'react';
+// import { Text, View, StyleSheet, Image } from 'react-native';
 import Button from '../../components/Button/Button';
 import Model from '../../components/Model/Model';
 import { getMovieInfo, checkUserFav, addToFav, deleteFromFav, updateMovComment, getPosterPath } from '../../userFunctions';
 import jwt_decode from 'jwt-decode';
 import NewReview from '../../components/MovieReviews/NewReview';
 import Results from '../../components/MovieReviews/Results';
+import styles from './MoviePage.module.css';
 
 class MoviePage extends Component {
     state = {
@@ -204,41 +206,89 @@ class MoviePage extends Component {
         this.setState({ comment: [e.target.value] });
     }
 
-
     render() {
         // let Image_Http_URL ={ uri: {poster_path}};
 
         return (
             <div>
+                <div className={styles.main}>
+                    <div className={styles.left} >
+                        <h3>{this.state.title}</h3>
+                        <img src={this.state.poster_path} alt="sorry no image available" />
+                    </div>
 
-                <h3>{this.state.title}</h3>
-                {/* <img src={this.state.poster_path} alt="sorry no image available" width="500" height="600" /> */}
-                {/* <img src="http://image.tmdb.org/t/p/w92/qJ2tW6WMUDux911r6m7haRef0WH.jpg" alt="sorry no image available" /> */}
-                <img src={this.state.poster_path} alt="sorry no image available" />
-                {/* <Card>
+                    {/* <img src={this.state.poster_path} alt="sorry no image available" width="500" height="600" /> */}
+                    {/* <img src="http://image.tmdb.org/t/p/w92/qJ2tW6WMUDux911r6m7haRef0WH.jpg" alt="sorry no image available" /> */}
+                    {/* <Card>
                     <Image src={this.state.poster_path} wrapped ui={false} />
                 </Card> */}
-                <p>{this.state.genres}</p >
-                <p>Year: {this.state.release_year}</p >
-                <p>Rating: {this.state.vote_average}</p >
-                <p>Language: {this.state.original_language}</p >
-                <p>Runtime: {this.state.runtime}</p >
-                <div>Directors: {this.state.directors}</div>
-                <div>Cast: {this.state.actors}</div>
-                <p>Overview: {this.state.overview}</p >
-                <Button clicked={this.clickHandler.bind(this)} btnType={this.state.btnType}>Like</Button>
-                <Model></Model>
-                { this.state.savedToFav ?
-                    <form onSubmit={this.submitHandler}>
-                        <input onChange={(event) => this.changeInputHandler(event)} value={this.state.comment}></input>
-                        <button>Update your comment!</button>
-                    </form>
-                    : null}
+                    <div className={styles.right}>
 
-                {/* <header className="App-header"> */}
-                <NewReview handleChange={this.handleChange} handleSubmit={this.handleSubmit} value={this.state.review} />
-                {this.state.loading ? <h1>Loading...</h1> : <Results {...this.state} />}
-                {/* </header> */}
+                        <span className={styles.ll}>Year: </span>
+                        <span className={styles.ss}>{this.state.release_year}</span>
+
+                        <p></p>
+                        <span className={styles.ll}>Genres: </span>
+                        <span className={styles.ss}>{this.state.genres}</span>
+
+                        <p></p>
+                        <span className={styles.ll}>Rating: </span>
+                        <span className={styles.ss}>{this.state.vote_average}</span>
+
+                        <p></p>
+                        <span className={styles.ll}>Language: </span>
+                        <span className={styles.ss}>{this.state.original_language}</span>
+
+                        <p></p>
+                        <span className={styles.ll}>Runtime: </span>
+                        <span className={styles.ss}>{this.state.runtime}</span>
+
+                        <p></p>
+                        <span className={styles.ll}>Director(s): </span>
+                        <span className={styles.ss}>{this.state.directors}</span>
+
+                        <p></p>
+                        <span className={styles.ll}>Actors: </span>
+                        <span className={styles.ss}>{this.state.actors}</span>
+
+                        <p></p>
+                        <span className={styles.ll}>Overview: </span>
+                        <span className={styles.ss}>{this.state.overview}</span>
+                        {/* 
+                        <p> Genres: {this.state.genres}</p>
+                        <p>Year: {this.state.release_year}</p>
+                        <p>Rating: {this.state.vote_average}</p >
+                        <p>Language: {this.state.original_language}</p >
+                        <p>Runtime: {this.state.runtime}</p >
+                        <div>Directors: {this.state.directors}</div>
+                        <p></p>
+                        <div>Cast: {this.state.actors}</div>
+                        <p>Overview: {this.state.overview}</p > */}
+
+                    </div>
+
+
+                </div>
+
+
+                <div className={styles.bottom}>
+                    <div className={styles.bottomLeft}>
+                        <Button clicked={this.clickHandler.bind(this)} btnType={this.state.btnType}>Like</Button>
+                        <Model></Model>
+                        {this.state.savedToFav ?
+                            <form onSubmit={this.submitHandler}>
+                                <input onChange={(event) => this.changeInputHandler(event)} value={this.state.comment}></input>
+                                <button>Update your comment!</button>
+                            </form>
+                            : null}
+                    </div>
+
+                </div>
+
+                <div className={styles.foot}>
+                    <NewReview handleChange={this.handleChange} handleSubmit={this.handleSubmit} value={this.state.review} />
+                    {this.state.loading ? <h1>Loading...</h1> : <Results {...this.state} />}
+                </div>
             </div>
         );
 
