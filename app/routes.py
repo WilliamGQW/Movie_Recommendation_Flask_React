@@ -147,13 +147,11 @@ def getMovieInfo():
     cur = conn.cursor()
     mvId = request.args.get("mvId")
 
-    cur.execute("SELECT title, id, genres, release_year, vote_average, original_language, runtime, director, actors, overview FROM Movies WHERE id = " +
-                str(mvId)+"")
+    cur.execute("SELECT title, id, genres, release_year, vote_average, original_language, "
+                "runtime, director, actors, overview FROM Movies WHERE id = " + str(mvId)+"")
 
     res = cur.fetchall()
     res = json.dumps(res)
-    print(res)
-    print(type(res))
     return res
 
 
@@ -389,10 +387,7 @@ def getPopularMovies():
             " GROUP BY Movies.id" \
             ") as temp JOIN Movies ON temp.id=Movies.id " \
             "WHERE cnt>=3 AND Movies.popularity>=50 AND Movies.vote_average>=6"
-    print(query)
     cur.execute(query)
     res = cur.fetchall()
     res = json.dumps(res)
-    print(res)
-    print(type(res))
     return res

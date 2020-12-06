@@ -8,15 +8,15 @@ import NavigationItems from '../../Navigation/NavigationItems/NavigationItems';
 
 const toolbar = (props) => {
 
-    return(
+    return (
         <header className={styles.Toolbar}>
             <div className={styles.Logo}>
                 <Logo></Logo>
             </div>
             <div>
-                <NavigationItems isAuthenticated={props.isAuthenticated}/>
+                <NavigationItems isAuthenticated={props.isAuthenticated} />
             </div>
-            
+
         </header>
     )
 }

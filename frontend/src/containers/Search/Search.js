@@ -133,17 +133,8 @@ class Search extends Component {
 
                 <p className={styles.body}> Popular Movies</p>
                 {this.state.popular ?
-                    <SearchResults results={this.state.popular} /> : <p>No popular movies available right now</p>}
+                    <SearchResults results={this.state.popular} clicked={this.clickHandler} /> : <p>No popular movies available right now</p>}
 
-
-                {/* <div className="row">
-
-                    <div className="col-md-4"></div>
-                    <div className="col-md-4">
-                        <Select onChange={this.change} value={this.state.rate} options={techCompanies} />
-                    </div>
-                    <div className="col-md-4"></div>
-                </div> */}
             </div>
         )
     }

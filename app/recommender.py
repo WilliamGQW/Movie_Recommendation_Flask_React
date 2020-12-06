@@ -3,7 +3,7 @@ import pandas as pd
 from functools import reduce
 from ast import literal_eval
 import sqlite3
-from sklearn.feature_extraction.text import CountVectorizer
+from sklearn.feature_extraction.text import CountVectorizer, TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
 from rake_nltk import Rake
 
@@ -29,7 +29,7 @@ for index, row in df.iterrows():
     r = Rake()
     r.extract_keywords_from_text(overview)
 
-    # getting the dictionary whith key words as keys and their scores as values
+    # getting the dictionary whith keywords as keys and their scores as values
     key_words_dict_scores = r.get_word_degrees()
 
     # assigning the key words to the new column for the corresponding movie
@@ -70,8 +70,14 @@ df = df[['title', 'list_of_words']]
 # pd.set_option('display.max_colwidth', -1)
 # print(df.iloc[0])
 
+# https://www.quora.com/What-is-the-difference-between-TfidfVectorizer-and-CountVectorizer-1
+# In TfidfVectorizer we consider overall document weightage of a word.
+# It helps us in dealing with most frequent words.
+# Using it we can penalize them.
+# TfidfVectorizer weights the word counts by a measure of how often they appear in the documents.
 
 count = CountVectorizer()
+# count = TfidfVectorizer()
 count_matrix = count.fit_transform(df['list_of_words'])
 
 # generating the cosine similarity matrix
@@ -88,7 +94,7 @@ indices = pd.Series(df['title'])
 def recommend(title, cosine_sim=cosine_sim):
     recommended_movies = []
     idx = indices[indices == title].index[0]
-    # creating a Series with the similarity scores in descending order
+    # creating a Series with the similarity scores in DESC order
     score_series = pd.Series(cosine_sim[idx]).sort_values(ascending=False)
 
     # getting the indexes of the n most similar movies
