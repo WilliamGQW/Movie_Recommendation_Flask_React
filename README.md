@@ -5,9 +5,9 @@ The project is a web-based movie database backed by MySQL and MongoDB. Users can
 
 ## Technologies used:
 
-[![My Skills](https://skillicons.dev/icons?i=flask,react,mysql,mongodb&perline=4)](https://skillicons.dev)
+[![My Skills](https://skillicons.dev/icons?i=flask,react,js,html,mysql,mongodb&perline=6)](https://skillicons.dev)
 
-Python Flask, React, MySQL, MongoDb
+Python Flask, React, JavaScript, HTML, MySQL, MongoDb
 
 ## Requirements:
 - Make sure you've installed all libraries listed in [requirements.txt](https://github.com/WilliamGQW/Movie_Recommendation_Flask_React/blob/master/requirements.txt)
